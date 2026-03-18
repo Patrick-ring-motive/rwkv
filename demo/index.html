@@ -4,359 +4,444 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>RWKV-v4 Web Demo</title>
-  <script src="github-pages-coop-coep-workaround.js"></script> <!-- This allows us to use wasm threads on Github Pages. -->
-  <script src="sample.js"></script>
-  <script src="code.js"></script>
+  <script src="github-pages-coop-coep-workaround.js"></script>
 </head>
 <body>
   <h1>RWKV-v4 Web Demo</h1>
-  <p>See <a href="https://github.com/josephrocca/rwkv-v4-web" target="_blank">the Github repo</a> for more details about this demo. The inference speed numbers are just for my laptop using <b>Chrome</b> - consider them as relative numbers at most, since performance obviously varies by device. Note that opening the browser console/DevTools <a href="https://github.com/microsoft/onnxruntime/issues/14692" target="_blank">currently slows down inference</a>, even after you close it.</p>
-  
+  <p>See <a href="https://github.com/josephrocca/rwkv-v4-web" target="_blank">the Github repo</a> for more
+  details about this demo. The inference speed numbers are just for my laptop - consider them as relative
+  numbers at most. Obviously varies by device. Note that opening the browser console/DevTools currently
+  slows down inference, even after you close it.</p>
+
   <hr>
 
   <div id="modelChoiceEl">
     <div style="max-width:750px;">Choose a model:</div>
     <table id="modelTableEl">
       <tr style="font-weight:bold;">
-        <td>Name</td>
-        <td>Params</td>
-        <td>File size</td>
-        <td>Inference speed</td>
-        <td>Notes</td>
+        <td>Name</td><td>Params</td><td>File size</td><td>Inference speed</td><td>Notes</td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m.onnx</td>
-        <td>169m</td>
-        <td>679 MB</td>
-        <td>~32 tokens/sec</td>
-        <td>-</td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-169m.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load local copy</button> </td>
+        <td>rwkv-4-pile-169m.onnx</td><td>169m</td><td>679 MB</td><td>~32 tokens/sec</td><td>-</td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m-uint8.onnx</td>
-        <td>169m</td>
-        <td>171 MB</td>
-        <td>~12 tokens/sec</td>
-        <td>uint8 quantized - smaller but slower</td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-169m-uint8.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load local copy</button> </td>
+        <td>rwkv-4-pile-169m-uint8.onnx</td><td>169m</td><td>171 MB</td><td>~12 tokens/sec</td><td>uint8 quantized - smaller but slower</td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m-webgl.onnx</td>
-        <td>169m</td>
-        <td>680 MB</td>
-        <td>~16 tokens/sec</td>
+        <td>rwkv-4-pile-169m-webgl.onnx</td><td>169m</td><td>680 MB</td><td>~16 tokens/sec</td>
         <td><a href="https://github.com/BlinkDL/RWKV-LM/issues/7#issuecomment-1225906768" target="_blank">webgl-compatible</a></td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-webgl.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='webgl'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-169m-webgl.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='webgl'; loadBtnEl.click();">load local copy</button> </td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-webgl.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='webgl'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr style="opacity:0.3;">
-        <td>rwkv-4-pile-430m.onnx</td>
-        <td>430m</td>
-        <td>1.73 GB</td>
-        <td>?</td>
+        <td>rwkv-4-pile-430m.onnx</td><td>430m</td><td>1.73 GB</td><td>?</td>
         <td style="color:red;">"RuntimeError: Aborted()" - too big to init</td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-430m.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load local copy</button> </td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m.with_runtime_opt.ort</td>
-        <td>430m</td>
-        <td>1.73 GB</td>
-        <td>~12 tokens/sec</td>
-        <td>ORT format</td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.with_runtime_opt.ort'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-430m.with_runtime_opt.ort'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load local copy</button> </td>
+        <td>rwkv-4-pile-430m.with_runtime_opt.ort</td><td>430m</td><td>1.73 GB</td><td>~12 tokens/sec</td><td>ORT format</td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.with_runtime_opt.ort'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m-uint8.onnx</td>
-        <td>430m</td>
-        <td>434 MB</td>
-        <td>~4 tokens/sec</td>
-        <td>uint8 quantized - smaller but slower</td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-uint8.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-430m-uint8.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load local copy</button> </td>
+        <td>rwkv-4-pile-430m-uint8.onnx</td><td>430m</td><td>434 MB</td><td>~4 tokens/sec</td><td>uint8 quantized - smaller but slower</td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-uint8.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m-webgl.onnx</td>
-        <td>430m</td>
-        <td>1.73 GB</td>
-        <td>~10 tokens/sec</td>
+        <td>rwkv-4-pile-430m-webgl.onnx</td><td>430m</td><td>1.73 GB</td><td>~10 tokens/sec</td>
         <td><a href="https://github.com/BlinkDL/RWKV-LM/issues/7#issuecomment-1225906768" target="_blank">webgl-compatible</a></td>
-        <td> <button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-webgl.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='webgl'; loadBtnEl.click();">load</button> </td>
-        <td> <button onclick="modelUrlInputEl.value='http://localhost:8080/rwkv-4-pile-430m-webgl.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='webgl'; loadBtnEl.click();">load local copy</button> </td>
+        <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-webgl.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='webgl'; loadBtnEl.click();">load</button></td>
       </tr>
     </table>
     <style>
-      #modelTableEl {
-        border-collapse: collapse;
-        margin-top: 1rem;
-      }
-      #modelTableEl td, #modelTableEl th {
-        border: 1px solid grey;
-      }
+      #modelTableEl { border-collapse: collapse; margin-top: 1rem; }
+      #modelTableEl td, #modelTableEl th { border: 1px solid grey; }
     </style>
-    <div style="max-width:750px; margin-top:1rem;">You can also load a custom model using a Hugging Face model URL. The URL must be a <u>direct</u> link to the model file. I.e. it must contain <b>/resolve/</b>, not /blob/ and must end in <i>.onnx</i> or <i>.ort</i></div>
+    <div style="max-width:750px; margin-top:1rem;">You can also load a custom model using a Hugging Face
+    model URL. The URL must be a <u>direct</u> link to the model file. I.e. it must contain <b>/resolve/</b>,
+    not /blob/ and must end in <i>.onnx</i> or <i>.ort</i></div>
     <div style="background:lightgrey; padding:0.5rem; width:fit-content;">
       <div><input id="modelUrlInputEl" style="width:700px" value="https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx"></div>
       <div>Num Layers: <input id="modelNumLayersEl" style="width:30px" value="12"></div>
-      <div>Embed Dim: <input id="modelEmbedDimEl" style="width:30px" value="768"></div>
-			<div>Backend: <select id="backendEl"> <option value="wasm">wasm</option> <option value="webgl">webgl (buggy)</option> </select></div>
+      <div>Embed Dim:  <input id="modelEmbedDimEl"  style="width:30px" value="768"></div>
+      <div>Backend: <select id="backendEl"><option value="wasm">wasm</option><option value="webgl">webgl (buggy)</option></select></div>
       <button id="loadBtnEl" onclick="resolveLoadClick()">load custom model</button>
     </div>
   </div>
-<script>
-	(()=>{
-		async function loadChunkedGzip(baseUrl, partCount) {
-		  const parts = [];
-		
-		  for (let i = 0; i < partCount; i++) {
-		    // Generates: partaa, partab, partac...
-		    const suffix = indexToSuffix(i);
-		    const res = await fetch(`${baseUrl}${suffix}`);
-		    parts.push(await res.arrayBuffer());
-		  }
-		
-		  // Concatenate all chunks
-		  const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
-		  const combined = new Uint8Array(totalLength);
-		  let offset = 0;
-		  for (const part of parts) {
-		    combined.set(new Uint8Array(part), offset);
-		    offset += part.byteLength;
-		  }
-		
-		  // Decompress
-		  const stream = new DecompressionStream("gzip");
-		  const writer = stream.writable.getWriter();
-		  writer.write(combined);
-		  writer.close();
-		
-		  const decompressed = await new Response(stream.readable).arrayBuffer();
-		  return decompressed;
-		}
-		
-		function indexToSuffix(i) {
-		  // Replicates split's aa, ab, ac... naming
-		  const letters = "abcdefghijklmnopqrstuvwxyz";
-		  return letters[Math.floor(i / 26)] + letters[i % 26];
-		}
 
-		const _fetch = globalThis.fetch;
-		globalThis.fetch = Object.setPrototypeOf(async function fetch(url,request){
-			url = url.url ?? url;
-			if(url === 'https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'){
-				const modelBuffer = await loadChunkedGzip("https://patrick-ring-motive.github.io/rwkv/demo/model/rwkv.onnx.gz.part",12);
-				return new Response(modelBuffer);
-			}
-			return _fetch.apply(this,arguments);
-		},_fetch);
-		const _open = XMLHttpRequest.prototype.open;
-		XMLHttpRequest.prototype.open = Object.setPrototypeOf(function open(method, url, async){
-			if(url === 'https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'){
-				this.opener = (async()=>{
-					const res = await fetch(url);
-					const blob = await res.blob();
-					const blobURL = URL.createObjectURL(blob);
-					_open.call(this,method,blobURL,async);
-				})();
-				return;
-			}
-			return _open.apply(this,arguments);
-		},_open);
-		const _send = XMLHttpRequest.prototype.send;
-		XMLHttpRequest.prototype.send = Object.setPrototypeOf(function send(){
-			if(this.opener){
-				(async()=>{
-					await this.opener;
-					_send.apply(this,arguments);
-				})();
-				return;
-			}
-			return _send.apply(this,arguments);
-		},_send);
-	})();
-</script>
   <div id="loadingMessageEl" style="display:none;">
     <div id="loadingStatusEl">Loading...</div>
     <progress id="downloadProgressEl"></progress>
   </div>
-   
+
   <div id="inputAreaEl" style="display:none;">
     <div id="modelInfoDisplayEl" style="opacity:0.5"></div>
-    <div style="display:flex; gap:10px">
-      <select id="exampleSelectorEl" onchange="promptInputEl.value=this.value;" style="display:block;">
-        <option default value="The capital of Australia is Canberra.
+    <select id="exampleSelectorEl" onchange="promptInputEl.value=this.value;" style="display:block;">
+      <option value="The capital of Australia is Canberra.
 The capital of France is Paris.
 The capital of Peru is">country capitals</option>
-        <option value="7*3=21
+      <option value="7*3=21
 21+2=23
 1+2*4=9
 7*2+31=">basic math</option>
-        <option value="QUESTION: The house is empty. Two people talk into the house. One person walks out, but then walks back in. A dog walks into the house. A person walks out of the house. How many people are in the house?
+      <option value="QUESTION: The house is empty. Two people talk into the house. One person walks out, but then walks back in. A dog walks into the house. A person walks out of the house. How many people are in the house?
 ANSWER: Let's think step by step. First,">word problem</option>
-        <option value="Jamie: Hey, did you hear the news?
+      <option value="Jamie: Hey, did you hear the news?
 Sam: No, what happened?
 Jamie: They're finally trialling gene drives to combat malaria in Nigeria!
 Sam:">chat</option>
-        <option value="dog --> fur --> soft --> teddy --> bear --> mammal --> taxonomy --> hierarchy --> king --> medieval -->">relationship chain</option>
-      </select>
-      <select id="samplingSelectorEl" onchange="samplingSelectorEl.value=this.value; multinomialOptions.style.display= (this.value === 'multinomial' ? 'contents':'none')" style="display:block;">
-        <option default value="multinomial">Multinomial sampling</option>
-        <option value="greedy">Greedy</option>
-      </select>
-      <div id="multinomialOptions">
-        <div title="Value close to 0 makes the model more predictable. Above 1 boosts the chance of a more random output">Temperature:<input id="tempEl" value="0.5" style="width:60px;"></div>
-        <div title="The closer to 1, the more we will ignore tokens with low value from the model">Top p:<input id="topPEl" value="0.8" style="width:60px;"></div>
-      </div>
-      <div title="0 means no penalty. Any higher number counts against the model (try a value of 1 to start)">Repetition penalty:<input id="repPenaltyEl" value="0" style="width:60px;"></div>
+      <option value="dog --> fur --> soft --> teddy --> bear --> mammal --> taxonomy --> hierarchy --> king --> medieval -->">relationship chain</option>
+    </select>
+    <textarea id="promptInputEl" style="width:550px; height:250px;"></textarea>
+    <script>promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;</script>
+    <div>
+      Num output tokens (including prompt):
+      <input id="numTokensToGenInputEl" type="number" value="128" style="width:60px;">
+      <span id="progressDisplayEl"></span>
+      <span id="tokensPerSecDisplayEl" style="opacity:0.6"></span>
     </div>
-    <div style="display:flex; width: 100%; gap: 20px;">
-      <textarea id="promptInputEl" style="width: 50%; height:250px;"></textarea>
-      <div id="htmloutput" style="width: 50%; white-space: pre-wrap;"></div>
-    </div>
-    <script>
-      promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;
-      multinomialOptions.style.display = "contents";
-    </script>
-    <div>Num output tokens (including prompt): <input id="numTokensToGenInputEl" type="number" value="128" style="width:60px;"> <span id="progressDisplayEl"></span> <span id="tokensPerSecDisplayEl" style="opacity:0.6"></span></div>
     <button id="generateButtonEl">generate text</button>
-    <div id="errorMessageEl" style="display:block; color: red;">
-    </div>
   </div>
-  
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js"></script>
-  
+
+
+  <!-- =====================================================================
+    WORKER: tokenizer  (Pyodide + HuggingFace tokenizers)
+    Handles: init | encode | decode
+    All messages carry an `id` field for promise-based RPC (except "ready").
+  ====================================================================== -->
+  <script id="src:tokenizer-worker" type="text/plain">
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js");
+
+let pyodide;
+
+self.onmessage = async ({ data }) => {
+  const { type, id } = data;
+
+  // ── One-time init ────────────────────────────────────────────────────────
+  if (type === "init") {
+    const { baseUrl } = data;
+
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage("micropip");
+
+    // Fetch tokenizer.json relative to the page (not the blob: origin of this worker)
+    const tokJson = await fetch(baseUrl + "tokenizer.json").then(r => r.text());
+    pyodide.FS.writeFile("/tokenizer.json", tokJson, { encoding: "utf8" });
+
+    // Pass the absolute .whl URL via a Python global so we avoid JS string interpolation
+    pyodide.globals.set("_whl_url", baseUrl + "tokenizers_python-0.11.0-cp310-cp310-emscripten_3_1_14_wasm32.whl");
+
+    await pyodide.runPythonAsync(`
+import os, micropip
+os.environ["TOKENIZERS_PARALLELISM"] = "0"  # threading not yet supported in Pyodide
+await micropip.install(_whl_url)
+from tokenizers import Tokenizer
+tokenizer = Tokenizer.from_file("/tokenizer.json")
+    `);
+
+    self.postMessage({ type: "ready" });
+    return;
+  }
+
+  // ── encode: text → token id array ───────────────────────────────────────
+  if (type === "encode") {
+    pyodide.globals.set("_in", data.text);
+    pyodide.runPython(`_ids = tokenizer.encode(_in).ids`);
+    self.postMessage({
+      type: "encoded", id,
+      tokens: Array.from(pyodide.globals.get("_ids").toJs()),
+    });
+    return;
+  }
+
+  // ── decode: token id array → text ───────────────────────────────────────
+  if (type === "decode") {
+    pyodide.globals.set("_t", data.tokens.join(","));
+    pyodide.runPython(`_dec = tokenizer.decode([int(x) for x in _t.split(",")])`);
+    self.postMessage({ type: "decoded", id, text: pyodide.globals.get("_dec") });
+  }
+};
+  </script>
+
+
+  <!-- =====================================================================
+    WORKER: inference  (onnxruntime-web)
+    Handles: load | generate
+    Streams: dl_progress | ort_init | loaded | token | step | done | error
+    Owns the full recurrent RWKV state so nothing large crosses the thread
+    boundary per step.  No wasm.proxy needed — already off the main thread.
+  ====================================================================== -->
+  <script id="src:inference-worker" type="text/plain">
+importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js");
+
+let session, n_layer, n_embd;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const greedySample = logits => {
+  let k = 0;
+  for (let i = 1; i < 50277; i++) if (logits[i] > logits[k]) k = i;
+  return k;
+};
+
+const padLeft = (arr, size) => {
+  const out = new Int32Array(size); // zero-filled by default
+  const off = size - arr.length;
+  for (let i = 0; i < arr.length; i++) out[off + i] = arr[i];
+  return out;
+};
+
+const freshState = () => {
+  const z  = () => new Float32Array(n_layer * n_embd);
+  const pp = z(); pp.fill(-1e30);
+  return {
+    xx_att: new ort.Tensor("float32", z(),  [n_layer, n_embd]),
+    aa_att: new ort.Tensor("float32", z(),  [n_layer, n_embd]),
+    bb_att: new ort.Tensor("float32", z(),  [n_layer, n_embd]),
+    pp_att: new ort.Tensor("float32", pp,   [n_layer, n_embd]),
+    xx_ffn: new ort.Tensor("float32", z(),  [n_layer, n_embd]),
+  };
+};
+
+const fetchWithProgress = url => new Promise((resolve, reject) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.responseType = "arraybuffer";
+  xhr.onprogress = e => self.postMessage({ type: "dl_progress", loaded: e.loaded, total: e.total });
+  xhr.onload     = ()  => resolve(new Blob([xhr.response]));
+  xhr.onerror    = ()  => reject(new Error(`XHR failed for ${url}`));
+  xhr.send();
+});
+
+// ── Message handler ────────────────────────────────────────────────────────
+self.onmessage = async ({ data }) => {
+
+  // ── Load model ────────────────────────────────────────────────────────
+  if (data.type === "load") {
+    ({ n_layer, n_embd } = data);
+
+    try {
+      // wasm.proxy is intentionally omitted — we are already in a worker,
+      // so proxying to a further sub-worker is unnecessary overhead.
+      if (self.crossOriginIsolated)
+        ort.env.wasm.numThreads = Math.max(1, (navigator.hardwareConcurrency / 2) | 0);
+
+      const isOrt = new URL(data.url).pathname.endsWith(".ort");
+      const opts  = isOrt
+        ? {
+            executionProviders: [data.backend],
+            enableMemPattern:   false,
+            enableCpuMemArena:  false,
+            extra: { session: {
+              disable_prepacking:                    "1",
+              use_device_allocator_for_initializers: "0",
+              use_ort_model_bytes_directly:          "1",
+              use_ort_model_bytes_for_initializers:  "1",
+            }},
+          }
+        : { executionProviders: [data.backend], graphOptimizationLevel: "all" };
+
+      const blob    = await fetchWithProgress(data.url);
+      self.postMessage({ type: "ort_init" });
+      const blobUrl = URL.createObjectURL(blob);
+      session       = await ort.InferenceSession.create(blobUrl, opts);
+      URL.revokeObjectURL(blobUrl);
+      self.postMessage({ type: "loaded" });
+
+    } catch (err) {
+      self.postMessage({ type: "error", message: String(err) });
+    }
+  }
+
+  // ── Generate tokens ───────────────────────────────────────────────────
+  if (data.type === "generate") {
+    const promptTokens = [...data.tokens]; // copy — we'll shift from this
+    const N            = data.numTokens;
+    const feeds        = freshState();
+    const ctx          = [promptTokens.shift()]; // seed context with first prompt token
+    const t0           = Date.now();
+
+    for (let i = 0; i < N; i++) {
+      feeds.idx  = new ort.Tensor("int32", padLeft(ctx, 1024), [1024]);
+      const out  = await session.run(feeds);
+      const tok  = greedySample(out.x.data);
+
+      if (promptTokens.length === 0) {
+        // Prompt fully consumed — this is a genuinely generated token
+        self.postMessage({ type: "token", token: tok });
+        ctx.push(tok);
+      } else {
+        // Still replaying the prompt — advance with the next prompt token
+        ctx.push(promptTokens.shift());
+      }
+
+      // Update recurrent state for next step
+      feeds.xx_att = out.xx_att_r;
+      feeds.aa_att = out.aa_att_r;
+      feeds.bb_att = out.bb_att_r;
+      feeds.pp_att = out.pp_att_r;
+      feeds.xx_ffn = out.xx_ffn_r;
+
+      self.postMessage({ type: "step", i: i + 1, N });
+    }
+
+    self.postMessage({
+      type: "done",
+      tps: (N / ((Date.now() - t0) / 1000)).toFixed(2),
+    });
+  }
+};
+  </script>
+
+
+  <!-- =====================================================================
+    MAIN COORDINATOR
+    - Spawns both workers from the inline script tags above
+    - Starts tokenizer loading immediately (parallel with model download)
+    - RPC layer: promise-based encode/decode over postMessage
+    - Drain queue: serialises async decode calls so textarea appends stay ordered
+  ====================================================================== -->
   <script type="module">
-    
-    await new Promise(r => window.resolveLoadClick=r); // wait for load button click
 
-    let onnxModelUrl = modelUrlInputEl.value;
-    let n_layer = Number(modelNumLayersEl.value);
-    let n_embd = Number(modelEmbedDimEl.value);
-		let backend = backendEl.value;
-    
-    modelInfoDisplayEl.innerHTML = `<b>url:</b>${onnxModelUrl} <b>n_layer:</b>${n_layer} <b>n_embd:</b>${n_embd} <b>backend:</b>${backend}`;
-    
-    modelChoiceEl.style.display = "none";
+    // ── Spawn workers from <script type="text/plain"> blobs ──────────────
+    const spawnWorker = id =>
+      new Worker(URL.createObjectURL(
+        new Blob([document.getElementById(id).textContent], { type: "application/javascript" })
+      ));
+
+    const tokW = spawnWorker("src:tokenizer-worker");
+    const ortW = spawnWorker("src:inference-worker");
+
+    // ── Lightweight RPC for the tokenizer worker ──────────────────────────
+    // Each call gets a numeric id; the worker echoes it back so we can
+    // resolve the right promise.  The `ready` event has no id and is handled
+    // separately.
+    let _rpcId = 0;
+    const _pending = new Map();
+
+    const rpc = (worker, msg) => new Promise(resolve => {
+      const id = _rpcId++;
+      _pending.set(id, resolve);
+      worker.postMessage({ ...msg, id });
+    });
+
+    const tokenizerReady = new Promise(resolve => {
+      tokW.onmessage = ({ data }) => {
+        if (data.type === "ready") { resolve(); return; }
+        const cb = _pending.get(data.id);
+        if (cb) { _pending.delete(data.id); cb(data); }
+      };
+    });
+
+    const encode = text   => rpc(tokW, { type: "encode", text   }).then(r => r.tokens);
+    const decode = tokens => rpc(tokW, { type: "decode", tokens }).then(r => r.text);
+
+    // Kick off tokenizer loading NOW — runs in parallel with the model download
+    // that starts after the user clicks Load.
+    tokW.postMessage({ type: "init", baseUrl: location.href.replace(/[^/]*$/, "") });
+
+    // ── Wait for user to click "load" ─────────────────────────────────────
+    await new Promise(r => window.resolveLoadClick = r);
+
+    const onnxModelUrl = modelUrlInputEl.value;
+    const n_layer      = Number(modelNumLayersEl.value);
+    const n_embd       = Number(modelEmbedDimEl.value);
+    const backend      = backendEl.value;
+
+    modelInfoDisplayEl.innerHTML   = `<b>url:</b>${onnxModelUrl} <b>n_layer:</b>${n_layer} <b>n_embd:</b>${n_embd} <b>backend:</b>${backend}`;
+    modelChoiceEl.style.display    = "none";
     loadingMessageEl.style.display = "";
-    errorMessageEl.innerHTML = "";
-    await pyodideInit();
 
-    function downloadBlobWithProgress(url, onProgress) {
-      return new Promise((res, rej) => {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function(e) {
-          if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status === 0 /* Loaded from local file */)) {
-            res(new Blob([this.response]));
-          } else if(xhr.status === 404 && url.startsWith('http://localhost')) {
-            rej(`Model not found locally.  Please download and place in the demo/ folder.  Make sure you are running on port 8080`);
-          } else {
-            console.log('onload: Loading model error', xhr, e);
-            rej(`Loading model error: ${xhr.status}: ${xhr.statusText}`);
+    // ── Start model download / session init in the inference worker ───────
+    const ortLoaded = new Promise((resolve, reject) => {
+      ortW.onmessage = ({ data }) => {
+        switch (data.type) {
+          case "dl_progress": {
+            const ratio = data.loaded / data.total;
+            downloadProgressEl.value    = ratio;
+            loadingStatusEl.textContent = `Downloading model… ${Math.round(ratio * data.total / 1e6)} MB`;
+            break;
+          }
+          case "ort_init":
+            loadingStatusEl.textContent = "Initializing ORT session…";
+            break;
+          case "loaded":
+            resolve();
+            break;
+          case "error":
+            reject(new Error(data.message));
+            break;
+        }
+      };
+    });
+
+    ortW.postMessage({ type: "load", url: onnxModelUrl, n_layer, n_embd, backend });
+
+    // Both workers load concurrently; wait for both before enabling the UI.
+    loadingStatusEl.textContent = "Loading tokenizer…";
+    await Promise.all([tokenizerReady, ortLoaded]);
+
+    inputAreaEl.style.display      = "";
+    loadingMessageEl.style.display = "none";
+
+    // ── Generate ──────────────────────────────────────────────────────────
+    generateButtonEl.onclick = async () => {
+      generateButtonEl.disabled    = true;
+      generateButtonEl.textContent = "Generating…";
+      tokensPerSecDisplayEl.textContent = "";
+
+      const tokens    = await encode(promptInputEl.value);
+      const numTokens = Number(numTokensToGenInputEl.value);
+
+      // Drain queue — keeps textarea appends in-order even though each
+      // decode() is an async round-trip that could overlap with the next.
+      const tokenQueue = [];
+      let draining  = false;
+      let inferDone = false;
+      let doneResolve;
+
+      const maybeFinish = () => {
+        if (inferDone && !draining && tokenQueue.length === 0) doneResolve();
+      };
+
+      const drainQueue = async () => {
+        if (draining) return;          // a drain loop is already running
+        draining = true;
+        while (tokenQueue.length > 0) {
+          promptInputEl.value += await decode([tokenQueue.shift()]);
+        }
+        draining = false;
+        maybeFinish();
+      };
+
+      await new Promise(resolve => {
+        doneResolve = resolve;
+
+        // Re-assign ortW.onmessage for this generation run.
+        // Safe: ortLoaded has already settled, no stray load-phase messages remain.
+        ortW.onmessage = ({ data }) => {
+          switch (data.type) {
+            case "token":
+              tokenQueue.push(data.token);
+              drainQueue();
+              break;
+            case "step":
+              progressDisplayEl.textContent = `Progress: ${data.i}/${data.N}`;
+              break;
+            case "done":
+              tokensPerSecDisplayEl.textContent = `(${data.tps} tokens/sec)`;
+              inferDone = true;
+              maybeFinish(); // resolve immediately if queue already drained
+              break;
           }
         };
-        xhr.onprogress = onProgress;
-        xhr.onerror = function(e){
-          console.log('onerror: Loading model error', xhr, e);
-          if (xhr.status === 0 && !xhr.statusText) {
-            // There's no information to show
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=118096
-            rej('Failed to load the model from Hugging Face. Might be related to a problem on their end.  Please try waiting a bit and then trying again, or use local copy (see README).')
-          } else {
-            rej(`Loading model error: ${xhr.status}: ${xhr.statusText}`);
-          }
-        }
-        xhr.send();
-      });
-    }
-    let session;
-    try {
-      let onnxModelBlob = await downloadBlobWithProgress(onnxModelUrl, function(e) {
-        let ratio = e.loaded / e.total;
-        downloadProgressEl.value = ratio;
-        loadingStatusEl.innerHTML = "Downloading..." + Math.round(ratio*e.total/1e6)+" MB";
-      });
-      if (!onnxModelBlob) {
-        throw new Error("Failed to download model");
-      }
-      loadingStatusEl.innerHTML = "Initializing...";
-      session = await createOrtSession(onnxModelBlob, new URL(onnxModelUrl).pathname.endsWith(".ort"), backend, n_layer, n_embd);
-    } catch (e) {
-      const errStr = `Failed to load ONNX model: ${e}.`;
-      console.log(errStr);
-      errorMessageEl.innerHTML=errStr;
-      console.error(e);
-    }   
-    inputAreaEl.style.display = "";
-    loadingMessageEl.style.display = "none";
-    
-    const abortSignal = { cancelled: false }; 
-    async function stop() {
-      abortSignal.cancelled = true;
-    }
-    async function generate() {
-      abortSignal.cancelled = false;
-      generateButtonEl.disabled = false;
-      generateButtonEl.innerHTML = "Stop";
-      generateButtonEl.onclick = stop;
-      generateButtonEl.style.color = "red";
-      
-      tokensPerSecDisplayEl.innerHTMl = "";
-      htmloutput.innerHTML = "";
-	    
-      let promptText = promptInputEl.value;
-      let numTokensToGenerate = Number(numTokensToGenInputEl.value);
 
-      const promptTextLen = promptText.length;
-      
-      function streamingCallback({token, other_tokens, status, i, outOf, tokensPerSec}) {
-        if(status === "Output" || status === "Reading prompt") {
-          progressDisplayEl.innerHTML = `${status} Progress: ${i}/${outOf}`;
-          tokensPerSecDisplayEl.innerHTML = '';
-        } else if (status === "Finished") {
-          progressDisplayEl.innerHTML = '';
-          tokensPerSecDisplayEl.innerHTML = `(${tokensPerSec.toFixed(2)} tokens/sec)`;
-        }
-        if(token) {
-          let text = tokensToText([token]);
-          const ol = other_tokens ? other_tokens.length : 0;
-          htmloutput.innerHTML += `<span style="color:${status === "Output" ? "blue" : "green"};${ol ? 'text-decoration: underline dotted gray;' : ''}" ${ol ? `title="chosen from ${ol+1} possible tokens"` : ''}>${text}${ol ? `<sub style="color:gray; font-size: smaller;">${ol+1}</sub>` : ''}</span>`;
-          if(status === "Output") {
-            promptInputEl.value += text;
-            promptInputEl.focus();
-            promptInputEl.selectionStart = promptTextLen;
-            promptInputEl.selectionEnd = promptInputEl.value.length;
-            setTimeout(() => {
-              promptInputEl.focus();
-            }, 0);
-          }
-        }
-      }
-      const samplingMethod = samplingSelectorEl.value;
-      const temperature = parseFloat(tempEl.value);
-      const topP = parseFloat(topPEl.value);
-      const repetativePenality = parseFloat(repPenaltyEl.value);
-      const show_other_tokens = true;
-      let result = await session.predictText(promptText, numTokensToGenerate, streamingCallback, abortSignal, samplingMethod, temperature, topP, repetativePenality, show_other_tokens).catch((err) => {
-        errorMessageEl.innerHTML = err;
-        console.error(err);
+        ortW.postMessage({ type: "generate", tokens, numTokens });
       });
-      
-      console.log(result);
-			
-      generateButtonEl.disabled = false;
-      generateButtonEl.innerHTML = "Generate";
-      generateButtonEl.onclick = generate;
-      generateButtonEl.style.color = "";
+
+      generateButtonEl.disabled    = false;
+      generateButtonEl.textContent = "generate text";
     };
-    generateButtonEl.onclick = generate;
 
-    
   </script>
 </body>
 </html>
