@@ -106,7 +106,78 @@
       <button id="loadBtnEl" onclick="resolveLoadClick()">load custom model</button>
     </div>
   </div>
+<script>
+	(()=>{
+		async function loadChunkedGzip(baseUrl, partCount) {
+		  const parts = [];
+		
+		  for (let i = 0; i < partCount; i++) {
+		    // Generates: partaa, partab, partac...
+		    const suffix = indexToSuffix(i);
+		    const res = await fetch(`${baseUrl}${suffix}`);
+		    parts.push(await res.arrayBuffer());
+		  }
+		
+		  // Concatenate all chunks
+		  const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
+		  const combined = new Uint8Array(totalLength);
+		  let offset = 0;
+		  for (const part of parts) {
+		    combined.set(new Uint8Array(part), offset);
+		    offset += part.byteLength;
+		  }
+		
+		  // Decompress
+		  const stream = new DecompressionStream("gzip");
+		  const writer = stream.writable.getWriter();
+		  writer.write(combined);
+		  writer.close();
+		
+		  const decompressed = await new Response(stream.readable).arrayBuffer();
+		  return decompressed;
+		}
+		
+		function indexToSuffix(i) {
+		  // Replicates split's aa, ab, ac... naming
+		  const letters = "abcdefghijklmnopqrstuvwxyz";
+		  return letters[Math.floor(i / 26)] + letters[i % 26];
+		}
 
+		const _fetch = globalThis.fetch;
+		globalThis.fetch = Object.setPrototypeOf(async function fetch(url,request){
+			url = url.url ?? url;
+			if(url === 'https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'){
+				const modelBuffer = await loadChunkedGzip("https://patrick-ring-motive.github.io/rwkv/demo/model/rwkv.onnx.gz.part",12);
+				return new Response(modelBuffer);
+			}
+			return _fetch.apply(this,arguments);
+		},_fetch);
+		const _open = XMLHttpRequest.prototype.open;
+		XMLHttpRequest.prototype.open = Object.setPrototypeOf(function open(method, url, async){
+			if(url === 'https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'){
+				this.opener = (async()=>{
+					const res = await fetch(url);
+					const blob = await res.blob();
+					const blobURL = URL.createObjectURL(blob);
+					_open.call(this,method,blobURL,async);
+				})();
+				return;
+			}
+			return _open.apply(this,arguments);
+		},_open);
+		const _send = XMLHttpRequest.prototype.send;
+		XMLHttpRequest.prototype.send = Object.setPrototypeOf(function send(){
+			if(this.opener){
+				(async()=>{
+					await this.opener;
+					_send.apply(this,arguments);
+				})();
+				return;
+			}
+			return _send.apply(this,arguments);
+		},_send);
+	})();
+</script>
   <div id="loadingMessageEl" style="display:none;">
     <div id="loadingStatusEl">Loading...</div>
     <progress id="downloadProgressEl"></progress>
