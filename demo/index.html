@@ -112,14 +112,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
     });
     return;
   }
-  console.log(self.crossOriginIsolated, ort.env.wasm.numThreads)
-  self.postMessage({
-      type: "log",
-	  data:{
-	    crossOriginIsolated:self.crossOriginIsolated,
-	    numThreads:ort.env.wasm.numThreads
-      }
-    });
+  
   if (type === "decode") {
     // data.tokens is an array of one or more token ids (batch decode supported)
     pyodide.globals.set("_t", data.tokens.join(","));
@@ -361,6 +354,14 @@ self.onmessage = async ({ data }) => {
     self.postMessage({ type: "done", tps: (N / ((Date.now() - t0) / 1000)).toFixed(2) });
   }
 };
+	  console.log(self.crossOriginIsolated, ort.env.wasm.numThreads)
+  self.postMessage({
+      type: "log",
+	  data:{
+	    crossOriginIsolated:self.crossOriginIsolated,
+	    numThreads:ort.env.wasm.numThreads
+      }
+    });
 	  /*]]>*/
   </style>
 
