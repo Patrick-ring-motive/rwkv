@@ -1,5 +1,5 @@
   /*<![CDATA[*/ 
-importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js");
+importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/ort.js");
 (()=>{
 		async function loadChunkedGzip(baseUrl, partCount) {
 		  const parts = [];
