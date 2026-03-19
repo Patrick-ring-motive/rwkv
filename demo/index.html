@@ -48,6 +48,19 @@ Sam:">chat</option>
     </div>
     <button id="generateButtonEl">generate text</button>
   </div>
+	<script>
+		const stringify = (x)=>{
+			try{
+			    return JSON.stringify(c);
+			}catch{
+				return String(x);
+			}
+		};
+		document.firstElementChild.appendChild(document.createElement('log'));
+		globalThis.log = (...args)=>{
+			log.innerHTML += `<br>${args.map(stringify).join('<br>')}`;
+		};
+	</script>
 
   <!-- =====================================================================
     WORKER: tokenizer  (Pyodide + HuggingFace tokenizers)
@@ -56,6 +69,12 @@ Sam:">chat</option>
   ====================================================================== -->
 
   <style id="src:tokenizer-worker">
+	  
+
+
+/*<![CDATA[*/ 
+
+
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js");
 
 let pyodide;
@@ -101,6 +120,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
     self.postMessage({ type: "decoded", id, text: pyodide.globals.get("_dec") });
   }
 };
+	/*]]>*/
   </style>
 
   <style>
@@ -118,6 +138,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
   </style>
 
   <style id="src:inference-worker">
+	  /*<![CDATA[*/ 
 importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js");
 (()=>{
 		async function loadChunkedGzip(baseUrl, partCount) {
@@ -332,6 +353,7 @@ self.onmessage = async ({ data }) => {
     self.postMessage({ type: "done", tps: (N / ((Date.now() - t0) / 1000)).toFixed(2) });
   }
 };
+	  /*]]>*/
   </style>
 
   <style>
