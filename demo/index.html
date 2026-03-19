@@ -312,7 +312,13 @@ self.onmessage = async ({ data }) => {
       await session.run(warmFeeds);
 
       self.postMessage({ type: "loaded" });
-
+	  self.postMessage({
+	      type: "log",
+		  data:{
+		    crossOriginIsolated:self.crossOriginIsolated,
+		    numThreads:ort.env.wasm.numThreads
+	      }
+	    });
     } catch (err) {
       self.postMessage({ type: "error", message: String(err) });
     }
@@ -355,13 +361,7 @@ self.onmessage = async ({ data }) => {
   }
 };
 	  console.log(self.crossOriginIsolated, ort.env.wasm.numThreads)
-  self.postMessage({
-      type: "log",
-	  data:{
-	    crossOriginIsolated:self.crossOriginIsolated,
-	    numThreads:ort.env.wasm.numThreads
-      }
-    });
+
 	  /*]]>*/
   </style>
 
