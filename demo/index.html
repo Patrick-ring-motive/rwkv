@@ -120,6 +120,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
     self.postMessage({ type: "decoded", id, text: pyodide.globals.get("_dec") });
   }
 };
+
 	/*]]>*/
   </style>
 
@@ -427,6 +428,8 @@ self.onmessage = async ({ data }) => {
           case "error":
             reject(new Error(data.message));
             break;
+		  case "log":
+			globalThis.log(data.data);
         }
       };
     });
