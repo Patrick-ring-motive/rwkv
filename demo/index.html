@@ -58,7 +58,7 @@ Sam:">chat</option>
 		};
 		document.firstElementChild.appendChild(document.createElement('log'));
 		globalThis.log = (...args)=>{
-			log.innerHTML += `<br>${args.map(stringify).join('<br>')}`;
+			document.querySelector('log').innerHTML += `<br>${args.map(stringify).join('<br>')}`;
 		};
 	</script>
 
