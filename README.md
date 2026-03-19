@@ -1,4 +1,6 @@
 # RWKV-v4 running in the browser
+https://patrick-ring-motive.github.io/rwkv/demo
+
 BlinkDL's RWKV-v4 running in the browser. [Thanks to @AXKuhta](https://github.com/BlinkDL/RWKV-LM/issues/7#issuecomment-1221261944) for their work in getting this working! And thanks to [@johnflux](https://github.com/josephrocca/rwkv-v4-web/pull/4) for multinomial sampling support.
 
 * **Browser demo**: https://josephrocca.github.io/rwkv-v4-web/demo
