@@ -60,6 +60,7 @@ Sam:">chat</option>
 		globalThis.log = (...args)=>{
 			document.querySelector('log').innerHTML += `<br>${args.map(stringify).join('<br>')}`;
 		};
+		log({crossOriginIsolated});
 	</script>
 
 
