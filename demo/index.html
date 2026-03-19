@@ -115,7 +115,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
       - ctx window capped at 1024 (no unbounded growth)
   ====================================================================== -->
 
-  <script id="src:inference-worker" type="text/plain">
+  <style id="src:inference-worker" type="text/plain">
 importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js");
 (()=>{
 		async function loadChunkedGzip(baseUrl, partCount) {
@@ -330,7 +330,7 @@ self.onmessage = async ({ data }) => {
     self.postMessage({ type: "done", tps: (N / ((Date.now() - t0) / 1000)).toFixed(2) });
   }
 };
-  </script>
+  </style>
 
   <!-- =====================================================================
     MAIN COORDINATOR
