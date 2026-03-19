@@ -387,8 +387,8 @@ self.onmessage = async ({ data }) => {
         new Blob([document.getElementById(id).textContent], { type: "application/javascript" })
       ));
 
-    const tokW = spawnWorker("src:tokenizer-worker");
-    const ortW = spawnWorker("src:inference-worker");
+    const tokW = new Worker('pyodide-worker.js');
+    const ortW = new Worker('ort-worker.js');
 
     // ── RPC layer ─────────────────────────────────────────────────────────
     let _rpcId = 0;
