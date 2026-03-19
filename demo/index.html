@@ -55,7 +55,7 @@ Sam:">chat</option>
     All messages carry an `id` field for promise-based RPC (except "ready").
   ====================================================================== -->
 
-  <script id="src:tokenizer-worker" type="babel/typescript">
+  <style id="src:tokenizer-worker">
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js");
 
 let pyodide;
@@ -101,9 +101,10 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
     self.postMessage({ type: "decoded", id, text: pyodide.globals.get("_dec") });
   }
 };
-  </script>
+  </style>
 
-  <!-- =====================================================================
+  <style>
+    =====================================================================
     WORKER: inference  (onnxruntime-web)
     Hardcoded for rwkv-4-pile-169m-uint8.onnx:
       n_layer=12, n_embd=768, vocab=50277, ctx=1024, backend=wasm
@@ -113,9 +114,10 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
       - Cache API: model stored after first download, served instantly on return
       - Session pre-warmed with a dummy pass before signalling "loaded"
       - ctx window capped at 1024 (no unbounded growth)
-  ====================================================================== -->
+   ======================================================================
+  </style>
 
-  <style id="src:inference-worker" type="text/plain">
+  <style id="src:inference-worker">
 importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js");
 (()=>{
 		async function loadChunkedGzip(baseUrl, partCount) {
@@ -332,7 +334,8 @@ self.onmessage = async ({ data }) => {
 };
   </style>
 
-  <!-- =====================================================================
+  <style>
+    ====================================================================
     MAIN COORDINATOR
     Optimizations vs generic version:
       - No model choice UI; both workers start loading on page load
@@ -340,7 +343,8 @@ self.onmessage = async ({ data }) => {
         the result is ready (or close to it) by the time Generate is clicked
       - Batch decode: tokens are decoded in groups of DECODE_BATCH to reduce
         tokenizer RPC round trips during streaming
-  ====================================================================== -->
+    ======================================================================
+  </style>
 
   <script type="module">
 
