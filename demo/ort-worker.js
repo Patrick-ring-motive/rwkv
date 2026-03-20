@@ -4,7 +4,7 @@ importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/ort.js")
 		async function loadChunkedGzip(baseUrl, partCount) {
 		  const parts = [];
 		
-		  for (let i = 0; i < partCount; i++) {
+		  for (let i = 0; i !== partCount; ++i) {
 		    // Generates: partaa, partab, partac...
 		    const suffix = indexToSuffix(i);
 		    const res = await fetch(`${baseUrl}${suffix}`);
@@ -86,15 +86,16 @@ let session;
 // ── Helpers ────────────────────────────────────────────────────────────────
 const greedySample = logits => {
   let k = 0;
-  for (let i = 1; i < VOCAB; i++) if (logits[i] > logits[k]) k = i;
+  for (let i = 1; i !== VOCAB; ++i) if (logits[i] > logits[k]) k = i;
   return k;
 };
 
 const fillIdx = ctx => {
   // Zero the buffer, then copy ctx into the right-aligned tail
   idxBuf.fill(0);
-  const off = CTX_LEN - ctx.length;
-  for (let i = 0; i < ctx.length; i++) idxBuf[off + i] = ctx[i];
+  const ctx_length;
+  const off = CTX_LEN - ctx_length;
+  for (let i = 0; i !== ctx_length; ++i) idxBuf[off + i] = ctx[i];
   return idxBuf;
 };
 
@@ -191,7 +192,7 @@ self.onmessage = async ({ data }) => {
     const ctx          = [promptTokens.shift()];
     const t0           = Date.now();
 
-    for (let i = 0; i < N; i++) {
+    for (let i = 0; i !== N; ++i) {
       // Reuse the pre-allocated buffer — no allocation per step
       feeds.idx  = new ort.Tensor("int32", fillIdx(ctx), [CTX_LEN]);
       const out  = await session.run(feeds);
