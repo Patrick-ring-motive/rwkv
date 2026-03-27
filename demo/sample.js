@@ -3,14 +3,14 @@ function greedySampling(x, tokenHistory = undefined, repetition_penalty = 0) {
   let max_k = 0;
   let max_v = x[0];
   const n = x.length;
-  
+
   for (let i = 1; i < n; i++) {
     if (x[i] > max_v) {
       max_v = x[i];
       max_k = i;
     }
   }
-  
+
   return max_k;
 }
 
@@ -31,12 +31,12 @@ function greedySampling(x, tokenHistory = undefined, repetition_penalty = 0) {
  *
  */
 function find_cutoff(probs, top_p_usual) {
-  let sorted_probs = probs.slice().sort((a,b) => b - a);
-  for(let i = 0; i < sorted_probs.length - 1; ++i) {
+  let sorted_probs = probs.slice().sort((a, b) => b - a);
+  for (let i = 0; i < sorted_probs.length - 1; ++i) {
     top_p_usual -= sorted_probs[i];
     if (top_p_usual <= 0) return sorted_probs[i];
   }
-  return sorted_probs[sorted_probs.length-1];
+  return sorted_probs[sorted_probs.length - 1];
 
   /** Above is equivalent to, but hopefully faster than: */
   /*
@@ -49,7 +49,7 @@ function find_cutoff(probs, top_p_usual) {
 function applyRepetitionPenalty(ozut, tokenHistory, repetition_penalty) {
   if (tokenHistory && repetition_penalty !== 0) {
     tokenHistory.forEach((token, i) =>
-      ozut[token]=ozut[token] - repetition_penalty
+      ozut[token] = ozut[token] - repetition_penalty
     )
   }
   return ozut;
@@ -57,13 +57,13 @@ function applyRepetitionPenalty(ozut, tokenHistory, repetition_penalty) {
 
 function getMultinomialProbs(ozut, temp = 1.0, top_p_usual = 0.8) {
   var probs = softmax(ozut);
-  
+
   const cutoff = find_cutoff(probs, top_p_usual);
   probs = probs.map(x => x < cutoff ? 0 : x);
   if (temp !== 1) {
     probs = probs.map(x => Math.pow(x, 1.0 / temp));
   }
-  
+
   const sum = probs.reduce((a, x) => a + x);
   return probs.map(x => x / sum);
 }
@@ -72,7 +72,7 @@ function getMultinomialProbs(ozut, temp = 1.0, top_p_usual = 0.8) {
 //  ozut = [-1, 0, 3, 5]
 // where this means that token 0 is least likely, token 1 next likely, then token 2, then token 3
 // instead of just choosing token 3, we instead return one randomly, but making token the most likely etc.
-function npsample(ozut, temp = 1.0, top_p_usual = 0.8, tokenHistory = undefined, repetition_penalty = 0) {  
+function npsample(ozut, temp = 1.0, top_p_usual = 0.8, tokenHistory = undefined, repetition_penalty = 0) {
   return choiceIndex(getMultinomialProbs(applyRepetitionPenalty(ozut, tokenHistory, repetition_penalty), temp, top_p_usual));
 }
 
@@ -96,7 +96,7 @@ function choiceIndex(p) {
     x -= p[i];
     if (x <= 0) return i;
   }
-  return p[n-1]; // should never happen
+  return p[n - 1]; // should never happen
 }
 
 function softmax(data, from = 0, to = data.length) {
@@ -122,5 +122,13 @@ function softmax(data, from = 0, to = data.length) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = {greedySampling, npsample, softmax, choiceIndex, find_cutoff, getMultinomialProbs, applyRepetitionPenalty};
+  module.exports = {
+    greedySampling,
+    npsample,
+    softmax,
+    choiceIndex,
+    find_cutoff,
+    getMultinomialProbs,
+    applyRepetitionPenalty
+  };
 }

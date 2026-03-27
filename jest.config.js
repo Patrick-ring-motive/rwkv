@@ -1,8 +1,7 @@
 /** @type {import('jest').Config} */
 const config = {
   verbose: true,
-  transform: {
-  }
+  transform: {}
 };
 
 module.exports = config;
