@@ -126,7 +126,8 @@
         return cached.arrayBuffer();
       }
     } catch (_) {
-      /* caches not available (e.g. non-secure context) — fall through */ }
+      /* caches not available (e.g. non-secure context) — fall through */
+    }
 
     // Download with progress reporting
     const buf = await new Promise((resolve, reject) => {
