@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>RWKV-v4 Web Demo</title>
   <script src="github-pages-coop-coep-workaround.js"></script>
 </head>
+
 <body>
   <h1>RWKV-v4 Web Demo</h1>
   <p>See <a href="https://github.com/josephrocca/rwkv-v4-web" target="_blank">the Github repo</a> for more
-  details about this demo. The inference speed numbers are just for my laptop - consider them as relative
-  numbers at most. Obviously varies by device. Note that opening the browser console/DevTools currently
-  slows down inference, even after you close it.</p>
+    details about this demo. The inference speed numbers are just for my laptop - consider them as relative
+    numbers at most. Obviously varies by device. Note that opening the browser console/DevTools currently
+    slows down inference, even after you close it.</p>
 
   <hr>
 
@@ -39,7 +41,10 @@ Sam:">chat</option>
       <option value="dog --> fur --> soft --> teddy --> bear --> mammal --> taxonomy --> hierarchy --> king --> medieval -->">relationship chain</option>
     </select>
     <textarea id="promptInputEl" style="width:550px; height:250px;"></textarea>
-    <script>promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;</script>
+    <script>
+      promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;
+
+    </script>
     <div>
       Num output tokens (including prompt):
       <input id="numTokensToGenInputEl" type="number" value="128" style="width:60px;">
@@ -48,30 +53,34 @@ Sam:">chat</option>
     </div>
     <button id="generateButtonEl">generate text</button>
   </div>
-	<script>
-		const stringify = (x)=>{
-			try{
-			    return JSON.stringify(x);
-			}catch{
-				return String(x);
-			}
-		};
-		document.firstElementChild.appendChild(document.createElement('log'));
-		globalThis.log = (...args)=>{
-			document.querySelector('log').innerHTML += `<br>${args.map(stringify).join('<br>')}`;
-		};
-		log({crossOriginIsolated});
-	</script>
+  <script>
+    const stringify = (x) => {
+      try {
+        return JSON.stringify(x);
+      } catch {
+        return String(x);
+      }
+    };
+    document.firstElementChild.appendChild(document.createElement('log'));
+    globalThis.log = (...args) => {
+      document.querySelector('log').innerHTML += `<br>${args.map(stringify).join('<br>')}`;
+    };
+    log({
+      crossOriginIsolated
+    });
+
+  </script>
 
 
   <script type="module">
-
     const DECODE_BATCH = 4; // decode this many tokens per tokenizer round trip
 
     // ── Spawn workers ─────────────────────────────────────────────────────
     const spawnWorker = id =>
       new Worker(URL.createObjectURL(
-        new Blob([document.getElementById(id).textContent], { type: "application/javascript" })
+        new Blob([document.getElementById(id).textContent], {
+          type: "application/javascript"
+        })
       ));
 
     const tokW = new Worker('pyodide-worker.js');
@@ -84,33 +93,55 @@ Sam:">chat</option>
     const rpc = (worker, msg) => new Promise(resolve => {
       const id = _rpcId++;
       _pending.set(id, resolve);
-      worker.postMessage({ ...msg, id });
+      worker.postMessage({
+        ...msg,
+        id
+      });
     });
 
     const tokenizerReady = new Promise(resolve => {
-      tokW.onmessage = ({ data }) => {
-        if (data.type === "ready") { resolve(); return; }
+      tokW.onmessage = ({
+        data
+      }) => {
+        if (data.type === "ready") {
+          resolve();
+          return;
+        }
         const cb = _pending.get(data.id);
-        if (cb) { _pending.delete(data.id); cb(data); }
+        if (cb) {
+          _pending.delete(data.id);
+          cb(data);
+        }
       };
     });
 
-    const encode = text   => rpc(tokW, { type: "encode", text   }).then(r => r.tokens);
-    const decode = tokens => rpc(tokW, { type: "decode", tokens }).then(r => r.text);
+    const encode = text => rpc(tokW, {
+      type: "encode",
+      text
+    }).then(r => r.tokens);
+    const decode = tokens => rpc(tokW, {
+      type: "decode",
+      tokens
+    }).then(r => r.text);
 
     // Both workers start immediately — no click gate
-    tokW.postMessage({ type: "init", baseUrl: location.href.replace(/[^/]*$/, "") });
+    tokW.postMessage({
+      type: "init",
+      baseUrl: location.href.replace(/[^/]*$/, "")
+    });
 
     // ── Start loading model ───────────────────────────────────────────────
     const ortLoaded = new Promise((resolve, reject) => {
-      ortW.onmessage = ({ data }) => {
+      ortW.onmessage = ({
+        data
+      }) => {
         switch (data.type) {
           case "dl_cached":
             loadingStatusEl.textContent = "Loading model from cache…";
             break;
           case "dl_progress": {
             const ratio = data.loaded / data.total;
-            downloadProgressEl.value    = ratio;
+            downloadProgressEl.value = ratio;
             loadingStatusEl.textContent = `Downloading model… ${Math.round(ratio * data.total / 1e6)} MB`;
             break;
           }
@@ -123,19 +154,21 @@ Sam:">chat</option>
           case "error":
             reject(new Error(data.message));
             break;
-		  case "log":
-			globalThis.log(data.data);
+          case "log":
+            globalThis.log(data.data);
         }
       };
     });
 
-    ortW.postMessage({ type: "load" });
+    ortW.postMessage({
+      type: "load"
+    });
 
     loadingStatusEl.textContent = "Loading tokenizer…";
     await Promise.all([tokenizerReady, ortLoaded]);
 
     loadingMessageEl.style.display = "none";
-    inputAreaEl.style.display      = "";
+    inputAreaEl.style.display = "";
 
     // ── Debounced pre-encode ──────────────────────────────────────────────
     // Encode runs in the background while the user finishes typing.
@@ -156,19 +189,19 @@ Sam:">chat</option>
 
     // ── Generate ──────────────────────────────────────────────────────────
     generateButtonEl.onclick = async () => {
-      generateButtonEl.disabled    = true;
+      generateButtonEl.disabled = true;
       generateButtonEl.textContent = "Generating…";
       tokensPerSecDisplayEl.textContent = "";
 
       // Use pre-encoded result if ready, otherwise encode now
-      const tokens    = await (_preEncodePromise ?? encode(promptInputEl.value));
+      const tokens = await (_preEncodePromise ?? encode(promptInputEl.value));
       _preEncodePromise = null;
       const numTokens = Number(numTokensToGenInputEl.value);
 
       // Batch drain queue — accumulates tokens and decodes in groups of
       // DECODE_BATCH to cut tokenizer RPC count by ~4x
       const tokenQueue = [];
-      let draining  = false;
+      let draining = false;
       let inferDone = false;
       let doneResolve;
 
@@ -191,7 +224,9 @@ Sam:">chat</option>
       await new Promise(resolve => {
         doneResolve = resolve;
 
-        ortW.onmessage = ({ data }) => {
+        ortW.onmessage = ({
+          data
+        }) => {
           switch (data.type) {
             case "token":
               tokenQueue.push(data.token);
@@ -209,10 +244,14 @@ Sam:">chat</option>
           }
         };
 
-        ortW.postMessage({ type: "generate", tokens, numTokens });
+        ortW.postMessage({
+          type: "generate",
+          tokens,
+          numTokens
+        });
       });
 
-      generateButtonEl.disabled    = false;
+      generateButtonEl.disabled = false;
       generateButtonEl.textContent = "generate text";
 
       // Pre-encode whatever's in the textarea now (includes generated text)
@@ -222,4 +261,5 @@ Sam:">chat</option>
   </script>
 
 </body>
+
 </html>
