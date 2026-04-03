@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>RWKV-v4 Web Demo</title>
   <script src="github-pages-coop-coep-workaround.js"></script>
 </head>
+
 <body>
   <h1>RWKV-v4 Web Demo</h1>
   <p>See <a href="https://github.com/josephrocca/rwkv-v4-web" target="_blank">the Github repo</a> for more
-  details about this demo. The inference speed numbers are just for my laptop - consider them as relative
-  numbers at most. Obviously varies by device. Note that opening the browser console/DevTools currently
-  slows down inference, even after you close it.</p>
+    details about this demo. The inference speed numbers are just for my laptop - consider them as relative
+    numbers at most. Obviously varies by device. Note that opening the browser console/DevTools currently
+    slows down inference, even after you close it.</p>
 
   <hr>
 
@@ -19,52 +21,92 @@
     <div style="max-width:750px;">Choose a model:</div>
     <table id="modelTableEl">
       <tr style="font-weight:bold;">
-        <td>Name</td><td>Params</td><td>File size</td><td>Inference speed</td><td>Notes</td>
+        <td>Name</td>
+        <td>Params</td>
+        <td>File size</td>
+        <td>Inference speed</td>
+        <td>Notes</td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m.onnx</td><td>169m</td><td>679 MB</td><td>~32 tokens/sec</td><td>-</td>
+        <td>rwkv-4-pile-169m.onnx</td>
+        <td>169m</td>
+        <td>679 MB</td>
+        <td>~32 tokens/sec</td>
+        <td>-</td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m-uint8.onnx</td><td>169m</td><td>171 MB</td><td>~12 tokens/sec</td><td>uint8 quantized - smaller but slower</td>
+        <td>rwkv-4-pile-169m-uint8.onnx</td>
+        <td>169m</td>
+        <td>171 MB</td>
+        <td>~12 tokens/sec</td>
+        <td>uint8 quantized - smaller but slower</td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-169m-webgl.onnx</td><td>169m</td><td>680 MB</td><td>~16 tokens/sec</td>
+        <td>rwkv-4-pile-169m-webgl.onnx</td>
+        <td>169m</td>
+        <td>680 MB</td>
+        <td>~16 tokens/sec</td>
         <td><a href="https://github.com/BlinkDL/RWKV-LM/issues/7#issuecomment-1225906768" target="_blank">webgl-compatible</a></td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-webgl.onnx'; modelNumLayersEl.value='12'; modelEmbedDimEl.value='768'; backendEl.value='webgl'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr style="opacity:0.3;">
-        <td>rwkv-4-pile-430m.onnx</td><td>430m</td><td>1.73 GB</td><td>?</td>
+        <td>rwkv-4-pile-430m.onnx</td>
+        <td>430m</td>
+        <td>1.73 GB</td>
+        <td>?</td>
         <td style="color:red;">"RuntimeError: Aborted()" - too big to init</td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m.with_runtime_opt.ort</td><td>430m</td><td>1.73 GB</td><td>~12 tokens/sec</td><td>ORT format</td>
+        <td>rwkv-4-pile-430m.with_runtime_opt.ort</td>
+        <td>430m</td>
+        <td>1.73 GB</td>
+        <td>~12 tokens/sec</td>
+        <td>ORT format</td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m.with_runtime_opt.ort'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m-uint8.onnx</td><td>430m</td><td>434 MB</td><td>~4 tokens/sec</td><td>uint8 quantized - smaller but slower</td>
+        <td>rwkv-4-pile-430m-uint8.onnx</td>
+        <td>430m</td>
+        <td>434 MB</td>
+        <td>~4 tokens/sec</td>
+        <td>uint8 quantized - smaller but slower</td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-uint8.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='wasm'; loadBtnEl.click();">load</button></td>
       </tr>
       <tr>
-        <td>rwkv-4-pile-430m-webgl.onnx</td><td>430m</td><td>1.73 GB</td><td>~10 tokens/sec</td>
+        <td>rwkv-4-pile-430m-webgl.onnx</td>
+        <td>430m</td>
+        <td>1.73 GB</td>
+        <td>~10 tokens/sec</td>
         <td><a href="https://github.com/BlinkDL/RWKV-LM/issues/7#issuecomment-1225906768" target="_blank">webgl-compatible</a></td>
         <td><button onclick="modelUrlInputEl.value='https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/430m/rwkv-4-pile-430m-webgl.onnx'; modelNumLayersEl.value='24'; modelEmbedDimEl.value='1024'; backendEl.value='webgl'; loadBtnEl.click();">load</button></td>
       </tr>
     </table>
     <style>
-      #modelTableEl { border-collapse: collapse; margin-top: 1rem; }
-      #modelTableEl td, #modelTableEl th { border: 1px solid grey; }
+      #modelTableEl {
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      #modelTableEl td,
+      #modelTableEl th {
+        border: 1px solid grey;
+      }
+
     </style>
     <div style="max-width:750px; margin-top:1rem;">You can also load a custom model using a Hugging Face
-    model URL. The URL must be a <u>direct</u> link to the model file. I.e. it must contain <b>/resolve/</b>,
-    not /blob/ and must end in <i>.onnx</i> or <i>.ort</i></div>
+      model URL. The URL must be a <u>direct</u> link to the model file. I.e. it must contain <b>/resolve/</b>,
+      not /blob/ and must end in <i>.onnx</i> or <i>.ort</i></div>
     <div style="background:lightgrey; padding:0.5rem; width:fit-content;">
       <div><input id="modelUrlInputEl" style="width:700px" value="https://huggingface.co/rocca/rwkv-4-pile-web/resolve/main/169m/rwkv-4-pile-169m-uint8.onnx"></div>
       <div>Num Layers: <input id="modelNumLayersEl" style="width:30px" value="12"></div>
-      <div>Embed Dim:  <input id="modelEmbedDimEl"  style="width:30px" value="768"></div>
-      <div>Backend: <select id="backendEl"><option value="wasm">wasm</option><option value="webgl">webgl (buggy)</option></select></div>
+      <div>Embed Dim: <input id="modelEmbedDimEl" style="width:30px" value="768"></div>
+      <div>Backend: <select id="backendEl">
+          <option value="wasm">wasm</option>
+          <option value="webgl">webgl (buggy)</option>
+        </select></div>
       <button id="loadBtnEl" onclick="resolveLoadClick()">load custom model</button>
     </div>
   </div>
@@ -93,7 +135,10 @@ Sam:">chat</option>
       <option value="dog --> fur --> soft --> teddy --> bear --> mammal --> taxonomy --> hierarchy --> king --> medieval -->">relationship chain</option>
     </select>
     <textarea id="promptInputEl" style="width:550px; height:250px;"></textarea>
-    <script>promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;</script>
+    <script>
+      promptInputEl.value = exampleSelectorEl.querySelectorAll("option")[0].value;
+
+    </script>
     <div>
       Num output tokens (including prompt):
       <input id="numTokensToGenInputEl" type="number" value="128" style="width:60px;">
@@ -110,7 +155,7 @@ Sam:">chat</option>
     All messages carry an `id` field for promise-based RPC (except "ready").
   ====================================================================== -->
   <script id="src:tokenizer-worker" type="text/plain">
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js");
+    importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0a2/full/pyodide.js");
 
 let pyodide;
 
@@ -172,7 +217,7 @@ tokenizer = Tokenizer.from_file("/tokenizer.json")
     boundary per step.  No wasm.proxy needed — already off the main thread.
   ====================================================================== -->
   <script id="src:inference-worker" type="text/plain">
-importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.13.1/dist/ort.js");
+    importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.13.1/dist/ort.js");
 
 let session, n_layer, n_embd;
 
@@ -301,11 +346,12 @@ self.onmessage = async ({ data }) => {
     - Drain queue: serialises async decode calls so textarea appends stay ordered
   ====================================================================== -->
   <script type="module">
-
     // ── Spawn workers from <script type="text/plain"> blobs ──────────────
     const spawnWorker = id =>
       new Worker(URL.createObjectURL(
-        new Blob([document.getElementById(id).textContent], { type: "application/javascript" })
+        new Blob([document.getElementById(id).textContent], {
+          type: "application/javascript"
+        })
       ));
 
     const tokW = spawnWorker("src:tokenizer-worker");
@@ -321,43 +367,65 @@ self.onmessage = async ({ data }) => {
     const rpc = (worker, msg) => new Promise(resolve => {
       const id = _rpcId++;
       _pending.set(id, resolve);
-      worker.postMessage({ ...msg, id });
+      worker.postMessage({
+        ...msg,
+        id
+      });
     });
 
     const tokenizerReady = new Promise(resolve => {
-      tokW.onmessage = ({ data }) => {
-        if (data.type === "ready") { resolve(); return; }
+      tokW.onmessage = ({
+        data
+      }) => {
+        if (data.type === "ready") {
+          resolve();
+          return;
+        }
         const cb = _pending.get(data.id);
-        if (cb) { _pending.delete(data.id); cb(data); }
+        if (cb) {
+          _pending.delete(data.id);
+          cb(data);
+        }
       };
     });
 
-    const encode = text   => rpc(tokW, { type: "encode", text   }).then(r => r.tokens);
-    const decode = tokens => rpc(tokW, { type: "decode", tokens }).then(r => r.text);
+    const encode = text => rpc(tokW, {
+      type: "encode",
+      text
+    }).then(r => r.tokens);
+    const decode = tokens => rpc(tokW, {
+      type: "decode",
+      tokens
+    }).then(r => r.text);
 
     // Kick off tokenizer loading NOW — runs in parallel with the model download
     // that starts after the user clicks Load.
-    tokW.postMessage({ type: "init", baseUrl: location.href.replace(/[^/]*$/, "") });
+    tokW.postMessage({
+      type: "init",
+      baseUrl: location.href.replace(/[^/]*$/, "")
+    });
 
     // ── Wait for user to click "load" ─────────────────────────────────────
     await new Promise(r => window.resolveLoadClick = r);
 
     const onnxModelUrl = modelUrlInputEl.value;
-    const n_layer      = Number(modelNumLayersEl.value);
-    const n_embd       = Number(modelEmbedDimEl.value);
-    const backend      = backendEl.value;
+    const n_layer = Number(modelNumLayersEl.value);
+    const n_embd = Number(modelEmbedDimEl.value);
+    const backend = backendEl.value;
 
-    modelInfoDisplayEl.innerHTML   = `<b>url:</b>${onnxModelUrl} <b>n_layer:</b>${n_layer} <b>n_embd:</b>${n_embd} <b>backend:</b>${backend}`;
-    modelChoiceEl.style.display    = "none";
+    modelInfoDisplayEl.innerHTML = `<b>url:</b>${onnxModelUrl} <b>n_layer:</b>${n_layer} <b>n_embd:</b>${n_embd} <b>backend:</b>${backend}`;
+    modelChoiceEl.style.display = "none";
     loadingMessageEl.style.display = "";
 
     // ── Start model download / session init in the inference worker ───────
     const ortLoaded = new Promise((resolve, reject) => {
-      ortW.onmessage = ({ data }) => {
+      ortW.onmessage = ({
+        data
+      }) => {
         switch (data.type) {
           case "dl_progress": {
             const ratio = data.loaded / data.total;
-            downloadProgressEl.value    = ratio;
+            downloadProgressEl.value = ratio;
             loadingStatusEl.textContent = `Downloading model… ${Math.round(ratio * data.total / 1e6)} MB`;
             break;
           }
@@ -374,28 +442,34 @@ self.onmessage = async ({ data }) => {
       };
     });
 
-    ortW.postMessage({ type: "load", url: onnxModelUrl, n_layer, n_embd, backend });
+    ortW.postMessage({
+      type: "load",
+      url: onnxModelUrl,
+      n_layer,
+      n_embd,
+      backend
+    });
 
     // Both workers load concurrently; wait for both before enabling the UI.
     loadingStatusEl.textContent = "Loading tokenizer…";
     await Promise.all([tokenizerReady, ortLoaded]);
 
-    inputAreaEl.style.display      = "";
+    inputAreaEl.style.display = "";
     loadingMessageEl.style.display = "none";
 
     // ── Generate ──────────────────────────────────────────────────────────
     generateButtonEl.onclick = async () => {
-      generateButtonEl.disabled    = true;
+      generateButtonEl.disabled = true;
       generateButtonEl.textContent = "Generating…";
       tokensPerSecDisplayEl.textContent = "";
 
-      const tokens    = await encode(promptInputEl.value);
+      const tokens = await encode(promptInputEl.value);
       const numTokens = Number(numTokensToGenInputEl.value);
 
       // Drain queue — keeps textarea appends in-order even though each
       // decode() is an async round-trip that could overlap with the next.
       const tokenQueue = [];
-      let draining  = false;
+      let draining = false;
       let inferDone = false;
       let doneResolve;
 
@@ -404,7 +478,7 @@ self.onmessage = async ({ data }) => {
       };
 
       const drainQueue = async () => {
-        if (draining) return;          // a drain loop is already running
+        if (draining) return; // a drain loop is already running
         draining = true;
         while (tokenQueue.length > 0) {
           promptInputEl.value += await decode([tokenQueue.shift()]);
@@ -418,7 +492,9 @@ self.onmessage = async ({ data }) => {
 
         // Re-assign ortW.onmessage for this generation run.
         // Safe: ortLoaded has already settled, no stray load-phase messages remain.
-        ortW.onmessage = ({ data }) => {
+        ortW.onmessage = ({
+          data
+        }) => {
           switch (data.type) {
             case "token":
               tokenQueue.push(data.token);
@@ -435,13 +511,18 @@ self.onmessage = async ({ data }) => {
           }
         };
 
-        ortW.postMessage({ type: "generate", tokens, numTokens });
+        ortW.postMessage({
+          type: "generate",
+          tokens,
+          numTokens
+        });
       });
 
-      generateButtonEl.disabled    = false;
+      generateButtonEl.disabled = false;
       generateButtonEl.textContent = "generate text";
     };
 
   </script>
 </body>
+
 </html>
